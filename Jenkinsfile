@@ -19,12 +19,26 @@ pipeline {
                 sh 'mvn clean package'
             }
         }
+
+        stage('SonarQube Scan') {
+            steps {
+                withSonarQubeEnv('Sonar') {
+                    sh '''
+                    mvn clean verify sonar:sonar \
+                    -Dsonar.projectKey=petclinic \
+                    -Dsonar.projectName=petclinic
+                    '''
+                }
+            }
+        }
+
     }
 
     post {
         success {
             echo 'Build Successful'
         }
+
         failure {
             echo 'Build Failed'
         }
